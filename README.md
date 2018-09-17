@@ -13,3 +13,6 @@ python main.py -i 1
 ### to revert symlinks back to OpenJDK7
 
 python main.py -i 1 -r 0
+
+
+![screenshot](screenshot.jpg)
