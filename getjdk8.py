@@ -14,7 +14,7 @@ prep_fpm = """
 sudo apt-get install ruby-full
 sudo apt-get install ruby1.9.1-full
 """
-install_fpm = "gem install --no-ri --no-rdoc fpm\n"
+install_fpm = "sudo gem install --no-ri --no-rdoc fpm\n"
 clone_builder = """
 mkdir ~/openjdkathome
 cd ~/openjdkathome
@@ -38,7 +38,7 @@ def get_jdk8():
         f.write(prep_build)
         f.write('echo preparing fpm\n')
         f.write(prep_fpm)
-        f.write('echo installing FPM (for creating debian packages)\n')
+        f.write('echo installing FPM for creating debian packages\n')
         f.write(install_fpm)
         f.write('echo ...\n')
         f.write(clone_builder)

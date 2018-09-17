@@ -49,7 +49,7 @@ def check_jdk(alt_wd=ALTWD, old_jdk=OLDJDK, new_jdk=NEWJDK):
 
 def relink_jdk(data, alt_wd=ALTWD):
     f = open('o.sh', 'w')
-    f.write('#!/usr/bin/env bash\nORIGN=$(pwd)\ncd {}\nclear\npwd\n'.format(ALT_WD))
+    f.write("#!/usr/bin/env bash\nORIGN=$(pwd)\ncd {}\nclear\npwd\n".format(alt_wd))
     for k, v in data.iteritems():
         _target_link = path.join(alt_wd, k)
         _new_link = v
