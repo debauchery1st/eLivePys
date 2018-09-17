@@ -52,15 +52,14 @@ def relink_jdk(data, alt_wd=ALTWD):
     f.write("#!/usr/bin/env bash\nORIGN=$(pwd)\ncd {}\nclear\npwd\n".format(alt_wd))
     for k, v in data.iteritems():
         _target_link = path.join(alt_wd, k)
-        _new_link = v
+        _new_link = v.replace('jre/', '') # fixes broken link
         try:
             assert path.exists(_target_link)
             assert path.exists(_new_link)
         except AssertionError as e:
             print(_target_link, _new_link)
             raise e
-        f.write('echo re-SymLinking  {} -> {}\nrm {}\nln -s {} {}\n'.format(
-            _target_link, _new_link, k, _new_link, _target_link))
+        f.write('rm {}\nln -s {} ./{}\n'.format(k, _new_link, k))
     f.close()
     call(['chmod', '+x', 'o.sh'])
 
