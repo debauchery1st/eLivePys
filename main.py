@@ -4,10 +4,11 @@ from time import sleep
 from alterjdk import check_jdk, NEWJDK, OLDJDK, parser, set_vars, relink_jdk
 from getjdk8 import get_jdk8
 from subprocess import call
+from alterjdk import INST
 
 
 if __name__ == "__main__":
-    a, e, o, n = set_vars(parser.parse_args())
+    a, e, o, n, _automatic = set_vars(parser.parse_args())
     dl_script = None
     if e == 0:
         print('creating dl script')
@@ -18,6 +19,9 @@ if __name__ == "__main__":
             call([dl_script])
         else:
             print('skipping compilation\n\n')
+    if _automatic:
+        call(['su', '-c', INST])
+        exit(0)
     print('WORKING DIRECTORY: {}\nOLD: {}\nNEW: {}\n'.format(a, o, n))
     results = check_jdk(alt_wd=a, old_jdk=o, new_jdk=n)
     totals = len(results)

@@ -6,23 +6,28 @@ from argparse import ArgumentParser
 ALTWD = "/etc/alternatives"                                # alternatives working directory
 OLDJDK = "/usr/lib/jvm/java-7-openjdk-i386"                # old jdk
 NEWJDK = "/opt/obuildfactory/jdk-1.8.0-openjdk-i686"       # new jdk
+INST = "cp ./install-java.sh /opt/obuildfactory;cd /opt/obuildfactory;chmod +x ./install-java.sh;./install-java.sh"
 
 parser = ArgumentParser()
 parser.add_argument("-r", "--reverse", help="new -> old")
 parser.add_argument("-i", "--install", help="dont compile")
+parser.add_argument("-m", "--manual", help="manually relink /etc/alternatives")
 
 
 def set_vars(args):
+    _use_alternatives = True
     _e = 0
+    if args.__getattribute__('manual') is not None:
+        _use_alternatives = False
     if args.__getattribute__('install') is not None:
         _e = 1
     if args.__getattribute__('reverse') is not None:
         print('reverse')
-        return ALTWD, _e, NEWJDK, OLDJDK
-    return ALTWD, _e, OLDJDK, NEWJDK
+        return ALTWD, _e, NEWJDK, OLDJDK, _use_alternatives
+    return ALTWD, _e, OLDJDK, NEWJDK, _use_alternatives
 
 
-def check_jdk(alt_wd=ALTWD, old_jdk=OLDJDK, new_jdk=NEWJDK):
+def old_check_jdk(alt_wd=ALTWD, old_jdk=OLDJDK, new_jdk=NEWJDK):
     relevant = {}
     missing = []
     for row in check_output(['ls', '-al', alt_wd]).split('\n'):
@@ -47,6 +52,20 @@ def check_jdk(alt_wd=ALTWD, old_jdk=OLDJDK, new_jdk=NEWJDK):
     return relevant
 
 
+def tmp_link(results):
+    totals = len(results)
+    if totals == 0:
+        print('\nnothing to do.\nrun with "-r 0"  or "--reverse 0" to replace {} with {}'.format(NEWJDK, OLDJDK))
+        exit(0)
+    ans = raw_input('\n\ngenerate bash-script to replace {} symbolic links? (Yes/n) : '.format(totals))
+    if ans == 'Yes':
+        relink_jdk(results)
+        doit = raw_input('\n\nrun ./o.sh with elevated privs? \ni.e.: sudo ./o.sh   :(Yes/n) : ')
+        if doit == 'Yes':
+            call(['sudo', './o.sh'])
+            print('{} is no longer needed and can be removed at your leisure.'.format(path.join(getcwd(), 'o.sh')))
+
+
 def relink_jdk(data, alt_wd=ALTWD):
     f = open('o.sh', 'w')
     f.write("#!/usr/bin/env bash\nORIGN=$(pwd)\ncd {}\nclear\npwd\n".format(alt_wd))
@@ -65,17 +84,9 @@ def relink_jdk(data, alt_wd=ALTWD):
 
 
 if __name__ == "__main__":
-    a, e, o, n = set_vars(parser.parse_args())
-    print('WORKING DIRECTORY: {}\nOLD: {}\nNEW: {}\n'.format(a, o, n))
-    results = check_jdk(alt_wd=a, old_jdk=o, new_jdk=n)
-    totals = len(results)
-    if totals == 0:
-        print('\nnothing to do.\nrun with "-r 0"  or "--reverse 0" to replace {} with {}'.format(NEWJDK, OLDJDK))
-        exit(0)
-    ans = raw_input('\n\ngenerate bash-script to replace {} symbolic links? (Yes/n) : '.format(totals))
-    if ans == 'Yes':
-        relink_jdk(results)
-        doit = raw_input('\n\nrun ./o.sh with elevated privs? \ni.e.: sudo ./o.sh   :(Yes/n) : ')
-        if doit == 'Yes':
-            call(['sudo', './o.sh'])
-            print('{} is no longer needed and can be removed at your leisure.'.format(path.join(getcwd(), 'o.sh')))
+    a, e, o, n, _automatic = set_vars(parser.parse_args())
+    if not _automatic:
+        print('WORKING DIRECTORY: {}\nOLD: {}\nNEW: {}\n'.format(a, o, n))
+        tmp_link(old_check_jdk(alt_wd=a, old_jdk=o, new_jdk=n))
+    else:
+        call(['su', '-c', INST])
