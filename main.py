@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from os import path, getcwd
 from time import sleep
-from alterjdk import check_jdk, NEWJDK, OLDJDK, parser, set_vars, relink_jdk
+from alterjdk import NEWJDK, OLDJDK, parser, set_vars, relink_jdk
 from getjdk8 import get_jdk8
 from subprocess import call
 from alterjdk import INST
