@@ -17,4 +17,4 @@ using the OpenJDK Build Factory http://github.com/hgomez/obuildfactory
 
 ## Why do this ?
 
-![screenshot](screenshot.jpg)
+![screenshot](shot-2018-09-22_22-11-13.jpg)
