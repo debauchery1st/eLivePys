@@ -54,7 +54,7 @@ Lookin' for adventure
 And whatever comes our way
 
 
-![screenshot](sh````ot-2018-09-25_14-11-32.png)
+![screenshot](shot-2018-09-25_14-11-32.png)
 ##
 Yeah Darlin' go make it happen
 
