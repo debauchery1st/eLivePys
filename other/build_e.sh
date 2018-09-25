@@ -2,6 +2,7 @@
 
 start=$(date +%Y%m%d%H%M%S);
 su -c "apt install git sudo"
+
 if [ "${1}" != "build" ]; then
   echo " this script will build Enlightenment on Debian 9 "
   echo " it should be run as a user and that user should be in the sudoers file"
@@ -11,14 +12,18 @@ if [ "${1}" != "build" ]; then
   echo " to continue building, add 'build' to the command line before pressing enter."
   exit 0
 fi
+
 echo "Enlightenment on Debian 9."
 echo "[base development] Started at ${start}"
-su -c "apt install autoconf autopoint libtool"
-su -c "apt install gcc g++ check libssl-dev libsystemd-dev libjpeg-dev libglib2.0-dev libgstreamer1.0-dev libluajit-5.1-dev libfreetype6-dev libfontconfig1-dev libfribidi-dev libx11-dev libxext-dev libxrender-dev libgl1-mesa-dev libgif-dev libtiff5-dev libpoppler-dev libpoppler-cpp-dev libspectre-dev libraw-dev librsvg2-dev libudev-dev libmount-dev libdbus-1-dev libpulse-dev libsndfile1-dev libxcursor-dev libxcomposite-dev libxinerama-dev libxrandr-dev libxtst-dev libxss-dev libbullet-dev libgstreamer-plugins-base1.0-dev doxygen"
-su -c "apt install libsdl2-dev"
-
-echo "[required for python-efl bindings]"
-su -c "apt install python-dbus-dev cython"
+su -c "apt install autoconf autopoint libtool gcc g++ check libssl-dev libsystemd-dev \
+       libjpeg-dev libglib2.0-dev libgstreamer1.0-dev libluajit-5.1-dev \
+       libfreetype6-dev libfontconfig1-dev libfribidi-dev libx11-dev \
+       libxext-dev libxrender-dev libgl1-mesa-dev libgif-dev libtiff5-dev \
+       libpoppler-dev libpoppler-cpp-dev libspectre-dev libraw-dev librsvg2-dev \
+       libudev-dev libmount-dev libdbus-1-dev libpulse-dev libsndfile1-dev libxcursor-dev \
+       libxcomposite-dev libxinerama-dev libxrandr-dev libxtst-dev libxss-dev libbullet-dev \
+       libgstreamer-plugins-base1.0-dev doxygen libsdl2-dev libpam0g-dev libxcb-keysyms1-dev \
+       libcurl3 libcurl3-gnutls libcurl4-gnutls-dev python-dbus-dev cython"
 
 echo '[Enlightenment Foundation Libraries]'
 git clone https://git.enlightenment.org/core/efl.git/
@@ -28,8 +33,7 @@ make
 sudo make install
 sudo ldconfig
 cd ..
-su -c "apt install python3-pip;pip3 install git+https://github.com/mesonbuild/meson.git;pip3 install ninja"
-su -c "apt install libpam0g-dev libxcb-keysyms1-dev libcurl3 libcurl3-gnutls libcurl4-gnutls-dev"
+
 
 echo '[Enlightenment]'
 git clone https://git.enlightenment.org/core/enlightenment.git/
@@ -229,5 +233,7 @@ cd ..
 
 end=$(date +%Y%m%d%H%M%S);
 elapsed=$(($end-$start));
-echo 'finished building'
-echo "Start  : ${start}\nStop   : ${end}\nElapsed: ${elapsed}"
+echo "[finished building]"
+echo 'Start  : ${start}'
+echo 'Stop   : ${end}'
+echo 'Elapsed: ${elapsed}'
