@@ -28,7 +28,7 @@ make
 sudo make install
 sudo ldconfig
 cd ..
-su -c "apt install python3-pip;pip3 install git+https://github.com/mesonbuild/meson.git"
+su -c "apt install python3-pip;pip3 install git+https://github.com/mesonbuild/meson.git;pip3 install ninja"
 su -c "apt install libpam0g-dev libxcb-keysyms1-dev libcurl3 libcurl3-gnutls libcurl4-gnutls-dev"
 
 echo '[Enlightenment]'
