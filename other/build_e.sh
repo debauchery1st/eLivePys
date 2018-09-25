@@ -14,7 +14,7 @@ if [ "${1}" != "build" ]; then
 fi
 
 echo "Enlightenment on Debian 9."
-echo "[base development] Started at ${start}"
+echo "[efl base development] Started at ${start}"
 su -c "apt install autoconf autopoint libtool gcc g++ check libssl-dev libsystemd-dev \
        libjpeg-dev libglib2.0-dev libgstreamer1.0-dev libluajit-5.1-dev \
        libfreetype6-dev libfontconfig1-dev libfribidi-dev libx11-dev \
@@ -23,7 +23,11 @@ su -c "apt install autoconf autopoint libtool gcc g++ check libssl-dev libsystem
        libudev-dev libmount-dev libdbus-1-dev libpulse-dev libsndfile1-dev libxcursor-dev \
        libxcomposite-dev libxinerama-dev libxrandr-dev libxtst-dev libxss-dev libbullet-dev \
        libgstreamer-plugins-base1.0-dev doxygen libsdl2-dev libpam0g-dev libxcb-keysyms1-dev \
-       libcurl3 libcurl3-gnutls libcurl4-gnutls-dev python-dbus-dev cython"
+       libcurl3 libcurl3-gnutls libcurl4-gnutls-dev python-dbus-dev cython python3-pip; \
+       pip3 install git+https://github.com/mesonbuild/meson.git;pip3 install ninja"
+
+echo "starting build..."
+sleep 1
 
 echo '[Enlightenment Foundation Libraries]'
 git clone https://git.enlightenment.org/core/efl.git/
