@@ -48,9 +48,7 @@ def create_debs(trunk, dirlist):
         else:
             foo = make_foo.format(dest)
         fake_inst = "cd {};{}".format(_src_dir, foo, dest)
-        fpm_cmd = ' '.join(['fpm', '-s', 'dir',
-                            '-t', 'deb', '-C', dest, '--name', k,
-                            '--depends', 'debian_dependency1'])
+        fpm_cmd = ' '.join(['fpm', '-s', 'dir', '-t', 'deb', '-C', dest, '--name', k])
         cli = ';'.join([make_fake, fake_inst, fpm_cmd])
         print('\n'.join([pkg_name, pkg_ver, pkg_maintainer, pkg_arch, pkg_desc, cli]))
         f_name = '/tmp/build_{}.sh'.format(k)
