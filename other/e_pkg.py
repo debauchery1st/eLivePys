@@ -13,7 +13,7 @@ control_fields = {'PACKAGE': 'Package: {}',
                   }
 kung_foo = 'sudo PREFIX=/usr DESTDIR={} ninja -C build install'
 make_foo = 'sudo make DESTDIR={} install'
-foo_order = ['efl', 'enlightentment', 'rage', 'terminology']
+foo_order = ['efl', 'enlightenment', 'rage', 'terminology']
 
 
 def dump_dirs(trunk, tmp='/var/tmp'):
@@ -36,7 +36,8 @@ def create_debs(trunk, dl):
     dirlist = foo_order + [str(foo.decode('utf8')) for foo in dl if foo not in foo_order]
     for k in dirlist:
         _src_dir = path.join(trunk, k)
-        _vercmd = "grep PACKAGE_VERSION {}".format(path.join(_src_dir, "configure")).split(' ')
+        _vercmd = "grep PACKAGE_VERSION {}".format(path.join(_src_dir, "configure"))
+        print(_vercmd)
         print('\n')
         stern = [str(n) for n in range(10)]+['.']
         cur_ver = ''.join([char for char in check_output(_vercmd).split('\n')[0].split('=').pop() if char in stern ])
