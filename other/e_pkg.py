@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from time import sleep
+from time import sleep, time
 from os import path, getcwd
 from sys import argv
 from subprocess import check_output, call
@@ -30,17 +30,34 @@ def dump_dirs(trunk, tmp='/var/tmp'):
     return x
 
 
+def f_run(cmd_str, check=True):
+    f_name = '/tmp/f_run_{}.sh'.format(str(time()).replace('.', ''))
+    with open(f_name, 'w') as f:
+        f.write("#!/bin/bash\n{}\n".format(cmd_str))
+    f.close()
+    sleep(.5)
+    call(['chmod', '+x', f_name])
+    if check:
+        r = check_output([f_name])
+    else:
+        call([f_name])
+    sleep(.1)
+    call(['rm', '-rf', f_name])
+    return r
+
+
 def create_debs(trunk, dl):
     print('trunk : {}'.format(trunk))
     last_location = str(getcwd())
+    _digits = [str(n) for n in range(10)] + ['.']
     dirlist = foo_order + [str(foo.decode('utf8')) for foo in dl if foo not in foo_order]
     for k in dirlist:
         _src_dir = path.join(trunk, k)
         _vercmd = "grep PACKAGE_VERSION {}".format(path.join(_src_dir, "configure"))
         print(_vercmd)
         print('\n')
-        stern = [str(n) for n in range(10)]+['.']
-        cur_ver = ''.join([char for char in check_output(_vercmd).split('\n')[0].split('=').pop() if char in stern ])
+        _verstr = f_run(_vercmd).split('\n')[0].split('=').pop()
+        cur_ver = ''.join([char for char in _verstr if char in _digits])
         pkg_name = control_fields['PACKAGE'].format(k)
         pkg_ver = control_fields['VERSION'].format(cur_ver)
         pkg_maintainer = control_fields['MAINTAINER'].format('{} developer(s)'.format(k))
@@ -65,11 +82,7 @@ def create_debs(trunk, dl):
         print('\n'.join([pkg_name, pkg_ver, pkg_maintainer, pkg_arch, pkg_desc, cli]))
         f_name = '/tmp/build_{}.sh'.format(k)
         with open(f_name, 'w') as f:
-            f.write("#!/bin/bash\n" + cli.replace(';', '\n') + '\n')
-        f.close()
-        sleep(.5)
-        call(['chmod', '+x', f_name])
-        call([f_name])
+            f_run(cli.replace(';', '\n'), check=False)
         sleep(.5)
         call(['mv', path.join(_src_dir, '*.deb'), last_location])
 
