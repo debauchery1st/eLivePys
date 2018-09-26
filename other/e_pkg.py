@@ -14,6 +14,8 @@ control_fields = {'PACKAGE': 'Package: {}',
 kung_foo = 'DESTDIR={} ninja -C build install'
 make_foo = 'make DESTDIR={} install'
 
+foo_order = ['efl', 'evas_generic_loaders', 'enlightentment', 'rage', 'terminology']
+
 
 def dump_dirs(trunk, tmp='/var/tmp'):
     tmp_f = path.join(tmp, 'e_dir.sh')
@@ -22,16 +24,17 @@ def dump_dirs(trunk, tmp='/var/tmp'):
         f.write("#!/bin/bash\nls -d {}\n".format(_src_dir))
     f.close()
     check_output('chmod +x {}'.format(tmp_f).split(' '))
-    dir_list = check_output(tmp_f).decode('utf8').split('\n')
+    dir_list = check_output(tmp_f).split('\n')
     x = [y.split(trunk)[1].strip('/') for y in dir_list if len(y) > 1]
     sleep(.123)
     check_output(['rm', tmp_f])
     return x
 
 
-def create_debs(trunk, dirlist):
+def create_debs(trunk, dl):
     print('trunk : {}'.format(trunk))
-    last_location = str(getcwd())
+    # last_location = str(getcwd())
+    dirlist = foo_order + [str(foo.decode('utf8')) for foo in dl if foo not in foo_order]
     for k in dirlist:
         print('\n')
         pkg_name = control_fields['PACKAGE'].format(k)
