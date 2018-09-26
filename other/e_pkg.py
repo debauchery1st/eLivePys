@@ -49,6 +49,7 @@ def f_run(cmd_str, check=False):
         if len(ans) < 2:
             call(['rm', '-rf', f_name])
             exit(0)
+        r = f_run(ans, check=True)
     sleep(.1)
     call(['rm', '-rf', f_name])
     return r
@@ -64,7 +65,7 @@ def create_debs(trunk, dl):
         _vercmd = "grep PACKAGE_VERSION {}".format(path.join(_src_dir, "configure"))
         print(_vercmd)
         print('\n')
-        _verstr = f_run(_vercmd, check=True).split('\n')[0].split('=').pop()
+        _verstr = f_run(_vercmd, check=True)
         cur_ver = ''.join([char for char in _verstr if char in _digits])
         pkg_name = control_fields['PACKAGE'].format(k)
         pkg_ver = control_fields['VERSION'].format(cur_ver)
@@ -88,7 +89,6 @@ def create_debs(trunk, dl):
         fpm_cmd = ' '.join(['fpm', '-s', 'dir', '-t', 'deb', '-v', cur_ver, '-C', dest, '--name', k])
         cli = ';'.join([make_fake, fake_inst, fpm_cmd])
         print('\n'.join([pkg_name, pkg_ver, pkg_maintainer, pkg_arch, pkg_desc, cli]))
-        f_name = '/tmp/build_{}.sh'.format(k)
         f_run(cli.replace(';', '\n'))
         sleep(.5)
         f_run(' '.join(['mv', path.join(_src_dir, '*.deb'), last_location]))
