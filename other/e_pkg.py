@@ -2,7 +2,7 @@
 from time import sleep, time
 from os import path, getcwd
 from sys import argv
-from subprocess import check_output, call
+from subprocess import check_output, call, CalledProcessError
 
 install_fpm = "sudo apt-get install ruby ruby-dev rubygems build-essential;sudo gem install --no-ri --no-rdoc fpm"
 control_fields = {'PACKAGE': 'Package: {}',
@@ -38,10 +38,17 @@ def f_run(cmd_str, check=False):
     f.close()
     sleep(.5)
     call(['chmod', '+x', f_name])
-    if check:
-        r = check_output([f_name])
-    else:
-        call([f_name])
+    try:
+        if check:
+            r = check_output([f_name])
+        else:
+            call([f_name])
+    except CalledProcessError as e:
+        print('\n\n\nError encountered while executing ({})'.format(cmd_str))
+        ans = raw_input("\nInput the correct command or press enter to quit : ")
+        if len(ans) < 2:
+            call(['rm', '-rf', f_name])
+            exit(0)
     sleep(.1)
     call(['rm', '-rf', f_name])
     return r
