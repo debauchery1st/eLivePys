@@ -13,7 +13,6 @@ control_fields = {'PACKAGE': 'Package: {}',
                   }
 kung_foo = 'sudo DESTDIR={} ninja -C build install'
 make_foo = 'sudo make DESTDIR={} install'
-
 foo_order = ['efl', 'enlightentment', 'rage', 'terminology']
 
 
@@ -36,22 +35,31 @@ def create_debs(trunk, dl):
     last_location = str(getcwd())
     dirlist = foo_order + [str(foo.decode('utf8')) for foo in dl if foo not in foo_order]
     for k in dirlist:
+        _src_dir = path.join(trunk, k)
+        _vercmd = "grep PACKAGE_VERSION {}".format(path.join(_src_dir, "configure")).split(' ')
         print('\n')
+        stern = [str(n) for n in range(10)]+['.']
+        cur_ver = ''.join([char for char in check_output(_vercmd).split('\n')[0].split('=').pop() if char in stern ])
         pkg_name = control_fields['PACKAGE'].format(k)
-        pkg_ver = control_fields['VERSION'].format('0.0')
+        pkg_ver = control_fields['VERSION'].format(cur_ver)
         pkg_maintainer = control_fields['MAINTAINER'].format('{} developer(s)'.format(k))
-        pkg_arch = control_fields['ARCHITECTURE'].format('all')
+        pkg_arch = control_fields['ARCHITECTURE'].format('amd64')
         pkg_desc = control_fields['DESCRIPTION'].format('local build')
         dest = '/tmp/{}'.format(k)
-        make_fake = "mkdir {}".format(dest)
+        # clean old /tmp/destination
+        if path.isdir(dest):
+            cont = raw_input("path {} already exists, may I remove it? (y/n): ".format(dest))
+            if cont not in ['Y', 'y', 'Yes']:
+                exit(0)
+            call(['rm', '-rf', dest])
+        make_fake = "mkdir -p {}".format(dest)
         # figure foo
-        _src_dir = path.join(trunk, k)
         if path.isfile(path.join(_src_dir, 'meson.build')):
             foo = kung_foo.format(dest)
         else:
             foo = make_foo.format(dest)
         fake_inst = "cd {};{}".format(_src_dir, foo, dest)
-        fpm_cmd = ' '.join(['fpm', '-s', 'dir', '-t', 'deb', '-C', dest, '--name', k])
+        fpm_cmd = ' '.join(['fpm', '-s', 'dir', '-t', 'deb', '-v', cur_ver, '-C', dest, '--name', k])
         cli = ';'.join([make_fake, fake_inst, fpm_cmd])
         print('\n'.join([pkg_name, pkg_ver, pkg_maintainer, pkg_arch, pkg_desc, cli]))
         f_name = '/tmp/build_{}.sh'.format(k)
