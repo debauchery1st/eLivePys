@@ -11,10 +11,10 @@ control_fields = {'PACKAGE': 'Package: {}',
                   'ARCHITECTURE': 'Architecture: {}',
                   'DESCRIPTION': 'Description: {}'
                   }
-kung_foo = 'DESTDIR={} ninja -C build install'
-make_foo = 'make DESTDIR={} install'
+kung_foo = 'sudo DESTDIR={} ninja -C build install'
+make_foo = 'sudo make DESTDIR={} install'
 
-foo_order = ['efl', 'evas_generic_loaders', 'enlightentment', 'rage', 'terminology']
+foo_order = ['efl', 'enlightentment', 'rage', 'terminology']
 
 
 def dump_dirs(trunk, tmp='/var/tmp'):
@@ -33,7 +33,7 @@ def dump_dirs(trunk, tmp='/var/tmp'):
 
 def create_debs(trunk, dl):
     print('trunk : {}'.format(trunk))
-    # last_location = str(getcwd())
+    last_location = str(getcwd())
     dirlist = foo_order + [str(foo.decode('utf8')) for foo in dl if foo not in foo_order]
     for k in dirlist:
         print('\n')
@@ -62,6 +62,7 @@ def create_debs(trunk, dl):
         call(['chmod', '+x', f_name])
         call([f_name])
         sleep(.5)
+        call(['mv', path.join(_src_dir, '*.deb'), last_location])
 
 
 if __name__ == "__main__":

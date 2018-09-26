@@ -48,13 +48,6 @@ sudo ninja -C build install
 
 cd ..
 
-echo '[evas_generic_loaders]'
-git clone https://git.enlightenment.org/core/evas_generic_loaders.git/
-cd evas_generic_loaders
-./autogen.sh --prefix=/usr && make && sudo make install
-
-cd ..
-
 echo '[rage]'
 git clone https://git.enlightenment.org/apps/rage.git/
 cd rage
@@ -238,6 +231,6 @@ cd ..
 end=$(date +%Y%m%d%H%M%S);
 elapsed=$(($end-$start));
 echo "[finished building]"
-echo 'Start  : ${start}'
-echo 'Stop   : ${end}'
-echo 'Elapsed: ${elapsed}'
+echo "Start  : ${start}"
+echo "Stop   : ${end}"
+echo "Elapsed: ${elapsed}"
