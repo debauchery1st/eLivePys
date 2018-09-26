@@ -11,7 +11,7 @@ control_fields = {'PACKAGE': 'Package: {}',
                   'ARCHITECTURE': 'Architecture: {}',
                   'DESCRIPTION': 'Description: {}'
                   }
-kung_foo = 'DESTDIR={} ninja install .'
+kung_foo = 'DESTDIR={} ninja -C build install'
 make_foo = 'make DESTDIR={} install'
 
 
