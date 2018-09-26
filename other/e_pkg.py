@@ -40,6 +40,7 @@ def f_run(cmd_str, check=True):
     if check:
         r = check_output([f_name])
     else:
+        r = True
         call([f_name])
     sleep(.1)
     call(['rm', '-rf', f_name])
