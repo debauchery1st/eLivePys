@@ -85,7 +85,7 @@ def create_debs(trunk, dl):
         with open(f_name, 'w') as f:
             f_run(cli.replace(';', '\n'), check=False)
         sleep(.5)
-        call(['mv', path.join(_src_dir, '*.deb'), last_location])
+        f_run(' '.join(['mv', path.join(_src_dir, '*.deb'), last_location]), check=False)
 
 
 if __name__ == "__main__":
