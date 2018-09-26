@@ -11,7 +11,7 @@ control_fields = {'PACKAGE': 'Package: {}',
                   'ARCHITECTURE': 'Architecture: {}',
                   'DESCRIPTION': 'Description: {}'
                   }
-kung_foo = 'sudo DESTDIR={} ninja -C build install'
+kung_foo = 'sudo PREFIX=/usr DESTDIR={} ninja -C build install'
 make_foo = 'sudo make DESTDIR={} install'
 foo_order = ['efl', 'enlightentment', 'rage', 'terminology']
 
