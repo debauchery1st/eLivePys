@@ -30,7 +30,8 @@ def dump_dirs(trunk, tmp='/var/tmp'):
     return x
 
 
-def f_run(cmd_str, check=True):
+def f_run(cmd_str, check=False):
+    r = True
     f_name = '/tmp/f_run_{}.sh'.format(str(time()).replace('.', ''))
     with open(f_name, 'w') as f:
         f.write("#!/bin/bash\n{}\n".format(cmd_str))
@@ -40,7 +41,6 @@ def f_run(cmd_str, check=True):
     if check:
         r = check_output([f_name])
     else:
-        r = True
         call([f_name])
     sleep(.1)
     call(['rm', '-rf', f_name])
@@ -57,7 +57,7 @@ def create_debs(trunk, dl):
         _vercmd = "grep PACKAGE_VERSION {}".format(path.join(_src_dir, "configure"))
         print(_vercmd)
         print('\n')
-        _verstr = f_run(_vercmd).split('\n')[0].split('=').pop()
+        _verstr = f_run(_vercmd, check=True).split('\n')[0].split('=').pop()
         cur_ver = ''.join([char for char in _verstr if char in _digits])
         pkg_name = control_fields['PACKAGE'].format(k)
         pkg_ver = control_fields['VERSION'].format(cur_ver)
@@ -82,10 +82,9 @@ def create_debs(trunk, dl):
         cli = ';'.join([make_fake, fake_inst, fpm_cmd])
         print('\n'.join([pkg_name, pkg_ver, pkg_maintainer, pkg_arch, pkg_desc, cli]))
         f_name = '/tmp/build_{}.sh'.format(k)
-        with open(f_name, 'w') as f:
-            f_run(cli.replace(';', '\n'), check=False)
+        f_run(cli.replace(';', '\n'))
         sleep(.5)
-        f_run(' '.join(['mv', path.join(_src_dir, '*.deb'), last_location]), check=False)
+        f_run(' '.join(['mv', path.join(_src_dir, '*.deb'), last_location]))
 
 
 if __name__ == "__main__":
